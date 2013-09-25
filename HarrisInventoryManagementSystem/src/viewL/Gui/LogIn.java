@@ -1,5 +1,7 @@
 package viewL.Gui;
 
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.sql.SQLException;
@@ -118,15 +120,34 @@ public class LogIn extends javax.swing.JFrame {
         });
 
         jPassword.setText("passWord");
-
         jUserName.setText("User name");
-        jUserName.setName("user"); // NOI18N
+        jUserName.addFocusListener(new FocusListener() {
+            @Override
+            public void focusGained(FocusEvent fe) {
+                jUserName.setText("");
+            }
+
+            @Override
+            public void focusLost(FocusEvent fe) {
+            }
+        });
+
+        jPassword.addFocusListener(new FocusListener() {
+            @Override
+            public void focusGained(FocusEvent fe) {
+                jPassword.setText("");
+            }
+
+            @Override
+            public void focusLost(FocusEvent fe) {
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
                 layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addComponent(jPanel1, javax.swing.GroupLayout.Alignment.TRAILING, 
+                .addComponent(jPanel1, javax.swing.GroupLayout.Alignment.TRAILING,
                 javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
@@ -145,17 +166,17 @@ public class LogIn extends javax.swing.JFrame {
         layout.setVerticalGroup(
                 layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(layout.createSequentialGroup()
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE,
                 javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                 .addComponent(lableUser)
-                .addComponent(jUserName, javax.swing.GroupLayout.PREFERRED_SIZE, 
+                .addComponent(jUserName, javax.swing.GroupLayout.PREFERRED_SIZE,
                 javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                 .addComponent(labelPassword)
-                .addComponent(jPassword, javax.swing.GroupLayout.PREFERRED_SIZE, 
+                .addComponent(jPassword, javax.swing.GroupLayout.PREFERRED_SIZE,
                 javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(btnLogIn)
@@ -178,7 +199,7 @@ public class LogIn extends javax.swing.JFrame {
         if (loggedIn) {
             JOptionPane.showMessageDialog(this, "Login Successful.");
             this.setVisible(false);
-        } else if(passwordStored == null){
+        } else if (passwordStored == null) {
             JOptionPane.showMessageDialog(this, "Login Failure.\nInvalid User Name");
         } else {
             JOptionPane.showMessageDialog(this, "Login Failure.\nInvalid Password");
