@@ -1,12 +1,17 @@
 package viewL.Gui;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.Action;
 import javax.swing.JOptionPane;
 
 public class LogIn extends javax.swing.JFrame {
@@ -27,6 +32,33 @@ public class LogIn extends javax.swing.JFrame {
      */
     public LogIn() {
         initComponents();
+        btnLogIn.addKeyListener(new KeyAdapter() {
+
+            @Override
+            public void keyReleased(KeyEvent ke) {
+                if (ke.getKeyCode() == KeyEvent.VK_ENTER) {
+                    btnLogIn.doClick();
+                }
+            }
+            
+        });
+        jUserName.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent ae) {
+                jPassword.requestFocus();
+            }
+        });
+        jPassword.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent ae) {
+                btnLogIn.requestFocus();
+            }
+        });
+        
+        
+        
         this.setAlwaysOnTop(true);
         this.setResizable(false);
         this.setLocationRelativeTo(null);
