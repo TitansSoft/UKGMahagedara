@@ -1,4 +1,4 @@
-package viewL.Gui;
+package DataAccess;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -8,7 +8,7 @@ import java.sql.Statement;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class ConnectToDatabase {
+public class DataAccessor {
 
     private Connection connect = null;
     private ResultSet resultSet = null;
@@ -22,7 +22,7 @@ public class ConnectToDatabase {
         statement.executeUpdate("INSERT INTO users VALUES('"+userName+"','"+passWord+"')");
     }
 
-    String getPassword(String userName) {
+    public String getPassword(String userName) {
         String password = null;
         try {
             Class.forName("com.mysql.jdbc.Driver");
@@ -35,7 +35,7 @@ public class ConnectToDatabase {
                 return password;
             }
         } catch (SQLException | ClassNotFoundException ex) {
-            Logger.getLogger(ConnectToDatabase.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(DataAccessor.class.getName()).log(Level.SEVERE, null, ex);
         }
         return password;
     }
