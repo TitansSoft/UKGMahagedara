@@ -1,5 +1,6 @@
 package viewL.Gui;
 
+import DataAccess.DataAccessor;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
@@ -23,7 +24,7 @@ public class LogIn extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPasswordField jPassword;
     private javax.swing.JTextField jUserName;
-    ConnectToDatabase connection = new ConnectToDatabase();
+    DataAccessor connection = new DataAccessor();
     // End of variables declaration
 
     /**
@@ -216,7 +217,8 @@ public class LogIn extends javax.swing.JFrame {
         String userName = jUserName.getText();
         String passwordEntered = this.jPassword.getText();
 
-        String passwordStored = connection.getPassword(userName);
+        String passwordStored;
+        passwordStored = connection.getPassword(userName);
         passwordEntered = encrypt(passwordEntered);
 
         boolean loggedIn = (passwordEntered.equals(passwordStored));
