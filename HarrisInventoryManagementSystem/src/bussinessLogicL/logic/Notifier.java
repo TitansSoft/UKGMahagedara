@@ -2,13 +2,13 @@ package bussinessLogicL.logic;
 
 public class Notifier {
 	
-	boolean messageDelivered;
+    boolean messageDelivered;
 
-	public boolean sendMessage(){
+    public boolean sendMessage(){
 		/*
 		 * Code to send the message (SMS)*/
 		
 		return this.messageDelivered;
-	}
+    }
 	
 }

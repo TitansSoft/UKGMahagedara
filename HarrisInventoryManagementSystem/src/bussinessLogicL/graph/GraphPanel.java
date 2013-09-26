@@ -11,8 +11,8 @@ import java.awt.RenderingHints;
 import java.awt.Stroke;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
@@ -90,6 +90,9 @@ public class GraphPanel extends JPanel {
                 }
                 g2.drawLine(x0, y0, x1, y1);
             }
+            else{
+                JOptionPane.showMessageDialog(this, "Sorry Not enough data to Show");
+            }
         }
 
         // create x and y axes 
@@ -123,7 +126,7 @@ public class GraphPanel extends JPanel {
         for (Double score : values) {
             minScore = Math.min(minScore, score);
         }
-        return (minScore*1.05);
+        return (minScore + minScore*.05);
     }
 
     private double getMaxValue() {
@@ -134,30 +137,13 @@ public class GraphPanel extends JPanel {
         return maxScore + maxScore* .05;
     }
 
-    public void setValues(List<Double> scores) {
-        this.values = scores;
-        invalidate();
-        this.repaint();
-    }
-
-    public List<Double> getScores() {
-    	/*Gets Values from the Database*/
-    	
-        return values;
-    }
-
     private static void createAndShowGui() {
-        List<Double> scores = new ArrayList<>();
-        Random random = new Random();
-        int maxDataPoints = 40;
-        int maxScore = 10;
+        List<Double> values = new ArrayList<>();
         String graphTopic = "Sales Variation";
-        for (int i = 0; i < maxDataPoints; i++) {
-            scores.add((double) random.nextDouble() * maxScore);
-        }
-        GraphPanel mainPanel = new GraphPanel(scores);
-        mainPanel.setPreferredSize(new Dimension(500, 300));
+        GraphPanel mainPanel = new GraphPanel(values);
         JFrame frame = new JFrame(graphTopic);
+        
+        mainPanel.setPreferredSize(new Dimension(500, 300));
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.getContentPane().add(mainPanel);
         frame.pack();
@@ -165,7 +151,7 @@ public class GraphPanel extends JPanel {
         frame.setVisible(true);
     }
 
-    public static void main(String[] args) {
+    public void drawGraph(List<Double> scores) {
       SwingUtilities.invokeLater(new Runnable() {
          public void run() {
             createAndShowGui();
