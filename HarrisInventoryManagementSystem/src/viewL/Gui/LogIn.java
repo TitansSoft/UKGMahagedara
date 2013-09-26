@@ -7,9 +7,12 @@ import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.nio.CharBuffer;
+import java.nio.charset.Charset;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.sql.SQLException;
+import java.util.Arrays;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
@@ -24,7 +27,7 @@ public class LogIn extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPasswordField jPassword;
     private javax.swing.JTextField jUserName;
-    DataAccessor connection = new DataAccessor();
+    private DataAccessor connection = new DataAccessor();
     // End of variables declaration
 
     /**
@@ -118,7 +121,8 @@ public class LogIn extends javax.swing.JFrame {
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
                 jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addComponent(lableWelcome, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE));
+                .addComponent(lableWelcome, javax.swing.GroupLayout.DEFAULT_SIZE, 
+                javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE));
         jPanel1Layout.setVerticalGroup(
                 jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(jPanel1Layout.createSequentialGroup()
@@ -187,9 +191,10 @@ public class LogIn extends javax.swing.JFrame {
                 .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
                 .addComponent(lableUser)
                 .addGap(18, 18, 18)
-                .addComponent(jUserName, javax.swing.GroupLayout.PREFERRED_SIZE, 197, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                .addComponent(jUserName, javax.swing.GroupLayout.PREFERRED_SIZE, 197, 
+                javax.swing.GroupLayout.PREFERRED_SIZE))))
                 .addGap(0, 25, Short.MAX_VALUE)));
-        layout.setVerticalGroup(
+                layout.setVerticalGroup(
                 layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(layout.createSequentialGroup()
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE,
@@ -215,13 +220,13 @@ public class LogIn extends javax.swing.JFrame {
 
     private void logIn(java.awt.event.ActionEvent evt) throws ClassNotFoundException, SQLException {
         String userName = jUserName.getText();
-        String passwordEntered = this.jPassword.getText();
+        char[] passwordEntered = this.jPassword.getPassword();
 
-        String passwordStored;
+        char [] passwordStored;
         passwordStored = connection.getPassword(userName);
         passwordEntered = encrypt(passwordEntered);
 
-        boolean loggedIn = (passwordEntered.equals(passwordStored));
+        boolean loggedIn = (Arrays.equals(passwordEntered, passwordStored));
 
         if (loggedIn) {
             JOptionPane.showMessageDialog(this, "Login Successful.");
@@ -233,10 +238,11 @@ public class LogIn extends javax.swing.JFrame {
         }
     }
 
-    private String encrypt(String s1) {
+    private char[] encrypt(char[] password) {
         try {
             MessageDigest md = MessageDigest.getInstance("SHA-256");
-            md.update(s1.getBytes());
+            byte[] bytes = Charset.forName("UTF-8").encode(CharBuffer.wrap(password)).array();
+            md.update(bytes);
 
             byte byteData[] = md.digest();
 
@@ -256,7 +262,7 @@ public class LogIn extends javax.swing.JFrame {
                 hexString.append(hex);
             }
 
-            return hexString.toString();
+            return hexString.toString().toCharArray();
 
         } catch (NoSuchAlgorithmException ex) {
             Logger.getLogger(LogIn.class.getName()).log(Level.SEVERE, null, ex);
