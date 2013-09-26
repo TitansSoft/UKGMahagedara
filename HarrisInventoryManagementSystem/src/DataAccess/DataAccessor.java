@@ -19,19 +19,19 @@ public class DataAccessor {
         connect = DriverManager.getConnection("jdbc:mysql://localhost/UKG?"
                 + "user=root&password=123");
         statement = connect.createStatement();
-        statement.executeUpdate("INSERT INTO users VALUES('"+userName+"','"+passWord+"')");
+        statement.executeUpdate("INSERT INTO user VALUES('"+userName+"','"+passWord+"')");
     }
 
-    public String getPassword(String userName) {
-        String password = null;
+    public char [] getPassword(String userName) {
+        char [] password = null;
         try {
             Class.forName("com.mysql.jdbc.Driver");
             connect = DriverManager.getConnection("jdbc:mysql://localhost/UKG?"
                     + "user=root&password=123");
             statement = connect.createStatement();
-            resultSet = statement.executeQuery("SELECT Password from users WHERE UserName = '" + userName + "'");
+            resultSet = statement.executeQuery("SELECT Password from user WHERE UserID = '" + userName + "'");
             if (resultSet.next()) {
-                password = resultSet.getString("Password");
+                password = resultSet.getString("Password").toCharArray();
                 return password;
             }
         } catch (SQLException | ClassNotFoundException ex) {
