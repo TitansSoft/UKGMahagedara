@@ -25,8 +25,8 @@ public class LogIn extends javax.swing.JFrame {
     private javax.swing.JLabel lableUser;
     private javax.swing.JLabel labelPassword;
     private javax.swing.JPanel jPanel1;
-    private javax.swing.JPasswordField jPassword;
-    private javax.swing.JTextField jUserName;
+    private javax.swing.JPasswordField txtfldPassword;
+    private javax.swing.JTextField txtfldUserName;
     private DataAccessor connection = new DataAccessor();
     // End of variables declaration
 
@@ -45,14 +45,14 @@ public class LogIn extends javax.swing.JFrame {
             }
             
         });
-        jUserName.addActionListener(new ActionListener() {
+        txtfldUserName.addActionListener(new ActionListener() {
 
             @Override
             public void actionPerformed(ActionEvent ae) {
-                jPassword.requestFocus();
+                txtfldPassword.requestFocus();
             }
         });
-        jPassword.addActionListener(new ActionListener() {
+        txtfldPassword.addActionListener(new ActionListener() {
 
             @Override
             public void actionPerformed(ActionEvent ae) {
@@ -105,8 +105,8 @@ public class LogIn extends javax.swing.JFrame {
         lableUser = new javax.swing.JLabel();
         labelPassword = new javax.swing.JLabel();
         btnLogIn = new javax.swing.JButton();
-        jPassword = new javax.swing.JPasswordField();
-        jUserName = new javax.swing.JTextField();
+        txtfldPassword = new javax.swing.JPasswordField();
+        txtfldUserName = new javax.swing.JTextField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -149,12 +149,12 @@ public class LogIn extends javax.swing.JFrame {
             }
         });
 
-        jPassword.setText("passWord");
-        jUserName.setText("User name");
-        jUserName.addFocusListener(new FocusListener() {
+        txtfldPassword.setText("passWord");
+        txtfldUserName.setText("User name");
+        txtfldUserName.addFocusListener(new FocusListener() {
             @Override
             public void focusGained(FocusEvent fe) {
-                jUserName.setText("");
+                txtfldUserName.setText("");
             }
 
             @Override
@@ -162,10 +162,10 @@ public class LogIn extends javax.swing.JFrame {
             }
         });
 
-        jPassword.addFocusListener(new FocusListener() {
+        txtfldPassword.addFocusListener(new FocusListener() {
             @Override
             public void focusGained(FocusEvent fe) {
-                jPassword.setText("");
+                txtfldPassword.setText("");
             }
 
             @Override
@@ -187,11 +187,11 @@ public class LogIn extends javax.swing.JFrame {
                 .addGroup(layout.createSequentialGroup()
                 .addComponent(labelPassword)
                 .addGap(18, 18, 18)
-                .addComponent(jPassword))
+                .addComponent(txtfldPassword))
                 .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
                 .addComponent(lableUser)
                 .addGap(18, 18, 18)
-                .addComponent(jUserName, javax.swing.GroupLayout.PREFERRED_SIZE, 197, 
+                .addComponent(txtfldUserName, javax.swing.GroupLayout.PREFERRED_SIZE, 197, 
                 javax.swing.GroupLayout.PREFERRED_SIZE))))
                 .addGap(0, 25, Short.MAX_VALUE)));
                 layout.setVerticalGroup(
@@ -202,31 +202,35 @@ public class LogIn extends javax.swing.JFrame {
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                 .addComponent(lableUser)
-                .addComponent(jUserName, javax.swing.GroupLayout.PREFERRED_SIZE,
+                .addComponent(txtfldUserName, javax.swing.GroupLayout.PREFERRED_SIZE,
                 javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                 .addComponent(labelPassword)
-                .addComponent(jPassword, javax.swing.GroupLayout.PREFERRED_SIZE,
+                .addComponent(txtfldPassword, javax.swing.GroupLayout.PREFERRED_SIZE,
                 javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(btnLogIn)
                 .addContainerGap()));
 
-        jUserName.getAccessibleContext().setAccessibleName("");
+        txtfldUserName.getAccessibleContext().setAccessibleName("");
 
         pack();
     }// </editor-fold>
 
     private void logIn(java.awt.event.ActionEvent evt) throws ClassNotFoundException, SQLException {
-        String userName = jUserName.getText();
-        char[] passwordEntered = this.jPassword.getPassword();
 
-        char [] passwordStored;
+        String userName = txtfldUserName.getText();
+        char[] passwordEntered = this.txtfldPassword.getPassword();
+        String passwordStored;
+        
         passwordStored = connection.getPassword(userName);
-        passwordEntered = encrypt(passwordEntered);
-
-        boolean loggedIn = (Arrays.equals(passwordEntered, passwordStored));
+        String password = encrypt(passwordEntered);
+        
+        //connection.createUser("user",encrypt(this.txtfldPassword.getPassword()));
+        System.out.println("Entered : " +password);
+        System.out.println("Stored  : " +passwordStored);
+        boolean loggedIn = (password.equals(passwordStored));
 
         if (loggedIn) {
             JOptionPane.showMessageDialog(this, "Login Successful.");
@@ -238,7 +242,7 @@ public class LogIn extends javax.swing.JFrame {
         }
     }
 
-    private char[] encrypt(char[] password) {
+    private String encrypt(char[] password) {
         try {
             MessageDigest md = MessageDigest.getInstance("SHA-256");
             byte[] bytes = Charset.forName("UTF-8").encode(CharBuffer.wrap(password)).array();
@@ -262,7 +266,7 @@ public class LogIn extends javax.swing.JFrame {
                 hexString.append(hex);
             }
 
-            return hexString.toString().toCharArray();
+            return hexString.toString();
 
         } catch (NoSuchAlgorithmException ex) {
             Logger.getLogger(LogIn.class.getName()).log(Level.SEVERE, null, ex);
