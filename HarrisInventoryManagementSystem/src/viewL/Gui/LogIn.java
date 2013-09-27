@@ -1,12 +1,20 @@
 package viewL.Gui;
 
 import DataAccess.DataAccessor;
+import com.sun.org.apache.xerces.internal.impl.dv.util.Base64;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.nio.CharBuffer;
 import java.nio.charset.Charset;
 import java.security.MessageDigest;
@@ -35,32 +43,26 @@ public class LogIn extends javax.swing.JFrame {
     public LogIn() {
         initComponents();
         btnLogIn.addKeyListener(new KeyAdapter() {
-
             @Override
             public void keyReleased(KeyEvent ke) {
                 if (ke.getKeyCode() == KeyEvent.VK_ENTER) {
                     btnLogIn.doClick();
                 }
             }
-            
         });
         txtfldUserName.addActionListener(new ActionListener() {
-
             @Override
             public void actionPerformed(ActionEvent ae) {
                 txtfldPassword.requestFocus();
             }
         });
         txtfldPassword.addActionListener(new ActionListener() {
-
             @Override
             public void actionPerformed(ActionEvent ae) {
                 btnLogIn.requestFocus();
             }
         });
-        
-        
-        
+
         this.setAlwaysOnTop(true);
         this.setResizable(false);
         this.setLocationRelativeTo(null);
@@ -120,7 +122,7 @@ public class LogIn extends javax.swing.JFrame {
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
                 jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addComponent(lableWelcome, javax.swing.GroupLayout.DEFAULT_SIZE, 
+                .addComponent(lableWelcome, javax.swing.GroupLayout.DEFAULT_SIZE,
                 javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE));
         jPanel1Layout.setVerticalGroup(
                 jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -142,7 +144,7 @@ public class LogIn extends javax.swing.JFrame {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 try {
                     logIn(evt);
-                } catch (        ClassNotFoundException | SQLException ex) {
+                } catch (ClassNotFoundException | SQLException ex) {
                     Logger.getLogger(LogIn.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
@@ -158,6 +160,7 @@ public class LogIn extends javax.swing.JFrame {
 
             @Override
             public void focusLost(FocusEvent fe) {
+                txtfldPassword.setText("Password");
             }
         });
 
@@ -190,10 +193,10 @@ public class LogIn extends javax.swing.JFrame {
                 .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
                 .addComponent(lableUser)
                 .addGap(18, 18, 18)
-                .addComponent(txtfldUserName, javax.swing.GroupLayout.PREFERRED_SIZE, 197, 
+                .addComponent(txtfldUserName, javax.swing.GroupLayout.PREFERRED_SIZE, 197,
                 javax.swing.GroupLayout.PREFERRED_SIZE))))
                 .addGap(0, 25, Short.MAX_VALUE)));
-                layout.setVerticalGroup(
+        layout.setVerticalGroup(
                 layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(layout.createSequentialGroup()
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE,
@@ -222,17 +225,30 @@ public class LogIn extends javax.swing.JFrame {
         String userName = txtfldUserName.getText();
         char[] passwordEntered = this.txtfldPassword.getPassword();
         String passwordStored;
-        
+
         passwordStored = connection.getPassword(userName);
         String password = encrypt(passwordEntered);
-        
+
         //connection.createUser("user",encrypt(this.txtfldPassword.getPassword()));
-        System.out.println("Entered : " +password);
-        System.out.println("Stored  : " +passwordStored);
+        System.out.println("Entered : " + password);
+        System.out.println("Stored  : " + passwordStored);
         boolean loggedIn = (password.equals(passwordStored));
 
         if (loggedIn) {
             JOptionPane.showMessageDialog(this, "Login Successful.");
+            try {
+                PrintWriter out;
+                java.util.Date date = new java.util.Date();
+                String dateFormatted = new java.text.SimpleDateFormat("dd/MM/yyyy HH:mm").format(date.getTime());
+                out = new PrintWriter(new BufferedWriter(new FileWriter("log.tmp", true)));
+                String encoded; 
+                encoded = Base64.encode(("User Name : " + userName + "\tTime : " + dateFormatted).getBytes("UTF-16"));
+                out.println(encoded);
+                readLogIn();
+                //System.out.println(new String(Base64.decode(encoded)));
+                out.close();
+            } catch (IOException e) {
+            }
             this.setVisible(false);
         } else if (passwordStored == null) {
             JOptionPane.showMessageDialog(this, "Login Failure.\nInvalid User Name");
@@ -271,5 +287,22 @@ public class LogIn extends javax.swing.JFrame {
             Logger.getLogger(LogIn.class.getName()).log(Level.SEVERE, null, ex);
         }
         return null;
+    }
+    
+    public void readLogIn(){
+        try {
+            FileReader fr = new FileReader("log.tmp");
+            BufferedReader br = new BufferedReader(fr);
+            String str;
+            try {
+                while(( str = br.readLine()) != null){
+                    System.out.println(new String(Base64.decode(str)));
+                }
+            } catch (IOException ex) {
+                Logger.getLogger(LogIn.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(LogIn.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 }
