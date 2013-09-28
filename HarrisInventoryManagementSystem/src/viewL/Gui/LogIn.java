@@ -255,7 +255,7 @@ public class LogIn extends javax.swing.JFrame {
         String passwordStored;
 
         passwordStored = connection.getPassword(userName);
-        String password = encrypt(passwordEntered);
+        String password = connection.encrypt(passwordEntered);
 
         //connection.createUser("user",encrypt(this.txtfldPassword.getPassword()));
         System.out.println("Entered : " + password);
@@ -283,38 +283,6 @@ public class LogIn extends javax.swing.JFrame {
         } else {
             JOptionPane.showMessageDialog(this, "Login Failure.\nInvalid Password");
         }
-    }
-
-    private String encrypt(char[] password) {
-        try {
-            MessageDigest md = MessageDigest.getInstance("SHA-256");
-            byte[] bytes = Charset.forName("UTF-8").encode(CharBuffer.wrap(password)).array();
-            md.update(bytes);
-
-            byte byteData[] = md.digest();
-
-            //convert the byte to hex format method 1
-            StringBuilder sb = new StringBuilder();
-            for (int i = 0; i < byteData.length; i++) {
-                sb.append(Integer.toString((byteData[i] & 0xff) + 0x100, 16).substring(1));
-            }
-
-            //convert the byte to hex format method 2
-            StringBuilder hexString = new StringBuilder();
-            for (int i = 0; i < byteData.length; i++) {
-                String hex = Integer.toHexString(0xff & byteData[i]);
-                if (hex.length() == 1) {
-                    hexString.append('0');
-                }
-                hexString.append(hex);
-            }
-
-            return hexString.toString();
-
-        } catch (NoSuchAlgorithmException ex) {
-            Logger.getLogger(LogIn.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        return null;
     }
 
     public void readLogIn() {
