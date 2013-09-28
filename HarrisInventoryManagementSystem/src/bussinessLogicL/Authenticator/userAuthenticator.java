@@ -9,47 +9,46 @@ import viewL.Users.User;
 
 public class userAuthenticator {
 
-    private static boolean testAuthentication = false;
+    private static boolean authenticated = false;
 
     public static void main(String args[]) {
-        boolean a = checkForAdmin("user");
+        boolean a = authenticated();
         System.out.println("a = " + a);
     }
 
-    public static boolean authenticated(String name, char [] passward) {
+    public static boolean authenticated() {
         DataAccessor da = new DataAccessor();
-        if (da.getPassword(name) != null) {
-            String storedPassword = da.getPassword(name);
-            String enteredPassword = da.encrypt(passward);
-            userAuthenticator.testAuthentication = storedPassword.equals(enteredPassword);
-        }
-        return testAuthentication;
-    }
-
-    public static boolean checkForAdmin(String userName) {
-        boolean result = false;
         JPanel panel = new JPanel();
         JLabel label = new JLabel("Enter an administrative password:");
         JPasswordField fldPassword = new JPasswordField("Password", 10);
         String[] options = new String[]{"OK", "Cancel"};
         char[] password = {};
-        User user = User.getUser(userName);
-        user = new User("user","Admin");
 
         panel.add(label);
         panel.add(fldPassword);
 
-        int option = JOptionPane.showOptionDialog(null, panel, "Authentication required",
-                JOptionPane.NO_OPTION, JOptionPane.PLAIN_MESSAGE,
-                null, options, options[1]);
-        if (option == 0) {
-            password = fldPassword.getPassword();
-        }
+        while (!authenticated) {
+            int option = JOptionPane.showOptionDialog(null, panel, "Authentication required",
+                    JOptionPane.NO_OPTION, JOptionPane.PLAIN_MESSAGE,
+                    null, options, options[1]);
+            if (option == 0) {
+                password = fldPassword.getPassword();
+                String enteredPassword = da.encrypt(password);
+                String givenAdmin = da.checkPassword(enteredPassword);
+                //user = User.getUser(givenAdmin);
+                User user = new User("user", "Admin");
 
-        if (authenticated(userName, password) && user.getAuthority().equals("Admin")) {
-            result = true;
+                if(givenAdmin != null ){
+                    authenticated = givenAdmin.equals(user.getAuthority());
+                }
+                if(!authenticated){
+                    JOptionPane.showMessageDialog(panel, "Access denied.");
+                }
+            }else{
+                break;
+            }
+            
         }
-
-        return result;
+        return authenticated;
     }
 }
