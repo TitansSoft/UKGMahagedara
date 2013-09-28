@@ -8,6 +8,7 @@ import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.FileNotFoundException;
@@ -23,6 +24,8 @@ import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
+import javax.swing.event.CaretEvent;
+import javax.swing.event.CaretListener;
 
 public class LogIn extends javax.swing.JFrame {
 
@@ -106,7 +109,7 @@ public class LogIn extends javax.swing.JFrame {
         lableUser = new javax.swing.JLabel();
         labelPassword = new javax.swing.JLabel();
         btnLogIn = new javax.swing.JButton();
-        txtfldPassword = new javax.swing.JPasswordField();
+        txtfldPassword = new javax.swing.JPasswordField("Password", 8);
         txtfldUserName = new javax.swing.JTextField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -114,7 +117,7 @@ public class LogIn extends javax.swing.JFrame {
         jPanel1.setBackground(new java.awt.Color(0, 51, 255));
         jPanel1.setBorder(javax.swing.BorderFactory.createMatteBorder(1, 1, 1, 1, new java.awt.Color(0, 0, 102)));
 
-        lableWelcome.setFont(new java.awt.Font("Times New Roman", 1, 18)); // NOI18N
+        lableWelcome.setFont(new java.awt.Font("Times New Roman", 1, 18));
         lableWelcome.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         lableWelcome.setText("Please Log In To Proceed");
 
@@ -150,8 +153,33 @@ public class LogIn extends javax.swing.JFrame {
             }
         });
 
+        //Create key listener that will listen when someone press Backspace key  
+        KeyListener kl = new KeyAdapter() {
+            @Override
+            public void keyPressed(KeyEvent event) {
+                if (event.getKeyCode() == KeyEvent.VK_BACK_SPACE) {
+                    txtfldPassword.setEditable(true);
+                }
+            }
+        };
+
+        CaretListener caretListener = new CaretListener() {
+            @Override
+            public void caretUpdate(CaretEvent event) {
+                int passwordLength = txtfldPassword.getText().length();
+
+                //If password length equal to 8 characters, password field will uneditable  
+                if (passwordLength == 8) {
+                    txtfldPassword.setEditable(false);
+                }
+            }
+        };
+
         txtfldPassword.setText("passWord");
         txtfldUserName.setText("User name");
+        txtfldPassword.addKeyListener(kl);
+        txtfldPassword.addCaretListener(caretListener);
+
         txtfldUserName.addFocusListener(new FocusListener() {
             @Override
             public void focusGained(FocusEvent fe) {
@@ -241,7 +269,7 @@ public class LogIn extends javax.swing.JFrame {
                 java.util.Date date = new java.util.Date();
                 String dateFormatted = new java.text.SimpleDateFormat("dd/MM/yyyy HH:mm").format(date.getTime());
                 out = new PrintWriter(new BufferedWriter(new FileWriter("log.tmp", true)));
-                String encoded; 
+                String encoded;
                 encoded = Base64.encode(("User Name : " + userName + "\tTime : " + dateFormatted).getBytes("UTF-16"));
                 out.println(encoded);
                 readLogIn();
@@ -288,14 +316,14 @@ public class LogIn extends javax.swing.JFrame {
         }
         return null;
     }
-    
-    public void readLogIn(){
+
+    public void readLogIn() {
         try {
             FileReader fr = new FileReader("log.tmp");
             BufferedReader br = new BufferedReader(fr);
             String str;
             try {
-                while(( str = br.readLine()) != null){
+                while ((str = br.readLine()) != null) {
                     System.out.println(new String(Base64.decode(str)));
                 }
             } catch (IOException ex) {
