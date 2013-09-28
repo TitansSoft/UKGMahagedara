@@ -1,8 +1,10 @@
 package bussinessLogicL.Authenticator;
 
 import DataAccess.DataAccessor;
-import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JPasswordField;
 import viewL.Users.User;
 
 public class userAuthenticator {
@@ -14,26 +16,35 @@ public class userAuthenticator {
         System.out.println("a = " + a);
     }
 
-    public static boolean authenticated(String name, String passward) {
+    public static boolean authenticated(String name, char [] passward) {
         DataAccessor da = new DataAccessor();
         if (da.getPassword(name) != null) {
             String storedPassword = da.getPassword(name);
-            userAuthenticator.testAuthentication = storedPassword.equals(passward);
+            String enteredPassword = da.encrypt(passward);
+            userAuthenticator.testAuthentication = storedPassword.equals(enteredPassword);
         }
         return testAuthentication;
     }
 
     public static boolean checkForAdmin(String userName) {
         boolean result = false;
-        
-        
-        JFrame temp = new JFrame("temp");
-        String password = JOptionPane.showInputDialog(temp,
-                "Please input an administrator password to proceed",
-                "Authentication required...",
-                JOptionPane.QUESTION_MESSAGE
-                );
+        JPanel panel = new JPanel();
+        JLabel label = new JLabel("Enter an administrative password:");
+        JPasswordField fldPassword = new JPasswordField("Password", 10);
+        String[] options = new String[]{"OK", "Cancel"};
+        char[] password = {};
         User user = User.getUser(userName);
+        user = new User("user","Admin");
+
+        panel.add(label);
+        panel.add(fldPassword);
+
+        int option = JOptionPane.showOptionDialog(null, panel, "Authentication required",
+                JOptionPane.NO_OPTION, JOptionPane.PLAIN_MESSAGE,
+                null, options, options[1]);
+        if (option == 0) {
+            password = fldPassword.getPassword();
+        }
 
         if (authenticated(userName, password) && user.getAuthority().equals("Admin")) {
             result = true;
