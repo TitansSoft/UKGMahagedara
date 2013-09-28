@@ -23,6 +23,7 @@ import java.security.NoSuchAlgorithmException;
 import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.event.CaretEvent;
 import javax.swing.event.CaretListener;
@@ -169,7 +170,7 @@ public class LogIn extends javax.swing.JFrame {
                 int passwordLength = txtfldPassword.getText().length();
 
                 //If password length equal to 8 characters, password field will uneditable  
-                if (passwordLength == 8) {
+                if (passwordLength > 8) {
                     txtfldPassword.setEditable(false);
                 }
             }
