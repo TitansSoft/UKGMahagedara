@@ -26,6 +26,7 @@ public class userAuthenticator {
     public static boolean checkForAdmin(String userName) {
         boolean result = false;
         
+        
         JFrame temp = new JFrame("temp");
         String password = JOptionPane.showInputDialog(temp,
                 "Please input an administrator password to proceed",
