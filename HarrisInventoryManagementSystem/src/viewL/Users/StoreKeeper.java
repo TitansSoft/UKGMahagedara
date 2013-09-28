@@ -1,5 +1,5 @@
 package viewL.Users;
 
-public class StoreKeeper extends user {
+public class StoreKeeper extends User {
 
 }

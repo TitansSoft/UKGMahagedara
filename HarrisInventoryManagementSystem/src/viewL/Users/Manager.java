@@ -1,5 +1,5 @@
 package viewL.Users;
 
-public class Manager extends user{
+public class Manager extends User{
 
 }

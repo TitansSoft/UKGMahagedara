@@ -1,5 +1,5 @@
 package viewL.Users;
 
-public class SalesRepresentative extends user{
+public class SalesRepresentative extends User{
 
 }
