@@ -1,6 +1,7 @@
 package bussinessLogicL.Authenticator;
 
 import DataAccess.DataAccessor;
+import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import viewL.Users.User;
 
@@ -24,9 +25,13 @@ public class userAuthenticator {
 
     public static boolean checkForAdmin(String userName) {
         boolean result = false;
-        String password = JOptionPane.showInputDialog(
+        
+        JFrame temp = new JFrame("temp");
+        String password = JOptionPane.showInputDialog(temp,
                 "Please input an administrator password to proceed",
-                JOptionPane.QUESTION_MESSAGE);
+                "Authentication required...",
+                JOptionPane.QUESTION_MESSAGE
+                );
         User user = User.getUser(userName);
 
         if (authenticated(userName, password) && user.getAuthority().equals("Admin")) {
