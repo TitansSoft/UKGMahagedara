@@ -9,6 +9,7 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import viewL.Gui.LogIn;
@@ -94,5 +95,57 @@ public class DataAccessor {
             Logger.getLogger(DataAccessor.class.getName()).log(Level.SEVERE, null, ex);
         }
         return userName;
+    }
+
+    public ArrayList<String> getItemList() {
+        ArrayList<String> items = new ArrayList<>();
+        items.add("");
+        try {
+            Class.forName("com.mysql.jdbc.Driver");
+            connect = DriverManager.getConnection("jdbc:mysql://localhost/UKG?"
+                    + "user=root&password=123");
+            statement = connect.createStatement();
+            resultSet = statement.executeQuery("SELECT * from item");
+            while (resultSet.next()) {
+                items.add(resultSet.getString("ItemCode"));
+            }
+        } catch (SQLException | ClassNotFoundException ex) {
+            Logger.getLogger(DataAccessor.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return items;
+    }
+
+    public ArrayList<String> getRepList() {
+        ArrayList<String> reps = new ArrayList<>();
+        reps.add("");
+        try {
+            Class.forName("com.mysql.jdbc.Driver");
+            connect = DriverManager.getConnection("jdbc:mysql://localhost/UKG?"
+                    + "user=root&password=123");
+            statement = connect.createStatement();
+            resultSet = statement.executeQuery("SELECT * from salesrep");
+            while (resultSet.next()) {
+                reps.add(resultSet.getString("RepID"));
+            }
+        } catch (SQLException | ClassNotFoundException ex) {
+            Logger.getLogger(DataAccessor.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return reps;
+    }
+
+    public String getIssueCode() {
+        String issueCode = null;
+        try {
+            Class.forName("com.mysql.jdbc.Driver");
+            connect = DriverManager.getConnection("jdbc:mysql://localhost/UKG?"
+                    + "user=root&password=123");
+            statement = connect.createStatement();
+            resultSet = statement.executeQuery("ORDER BY ID DESC LIMIT 1");
+            resultSet.next();
+            issueCode = resultSet.getString("IssueCode");
+        } catch (SQLException | ClassNotFoundException ex) {
+            Logger.getLogger(DataAccessor.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return issueCode;
     }
 }
